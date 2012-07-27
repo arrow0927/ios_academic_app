@@ -1,0 +1,1068 @@
+/*----------AcademicViewController.h---------------*/
+
+#import <UIKit/UIKit.h>
+#import "Constants.h";
+#import "ProgramsViewController.h"
+#import "FacultiesViewController.h"
+@interface AcademicsViewController : UITableViewController 
+{
+	NSMutableArray *departments;
+	NSDictionary *academics2;
+	NSMutableArray *keys;
+	UITableView *table;
+
+}
+
+@property(nonatomic, retain) NSMutableArray *departments;
+@property(nonatomic, retain) NSDictionary *academics2;
+@property (nonatomic, retain) IBOutlet UITableView *table;
+@property (nonatomic, retain)  NSMutableArray *keys;
+
+@end
+
+/*------------AcademicsViewController.m-------------*/
+
+#import "AcademicsViewController.h"
+
+@implementation AcademicsViewController
+@synthesize departments;
+@synthesize academics2;
+@synthesize table;
+@synthesize keys;
+//=============================================================================
+/*
+- (id)initWithStyle:(UITableViewStyle)style 
+ {
+    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+    if (self = [super initWithStyle:style]) {
+    }
+    return self;
+}
+*/
+//=============================================================================
+- (void)viewDidLoad 
+ {
+    [super viewDidLoad];
+	 self.title = @"AcademicsViewController";
+	 //*********************
+	/*
+	 NSString *path = [[NSBundle mainBundle] pathForResource:@"academics" 
+													  ofType:@"plist"];
+	 NSMutableArray *tmpArray =
+	 [[NSMutableArray alloc] initWithContentsOfFile:path ];
+	 self.departments = tmpArray;
+	 [tmpArray release];
+	*/
+	 //*********************
+	 NSString *path2 = [[NSBundle mainBundle] pathForResource:@"academics2" 
+													   ofType:@"plist"];
+	 NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:path2];
+	 self.academics2 = dict;
+	 //academics2 is the dictionary that holds Keys(section headers) and 
+	 //values (the actual entities)
+	 [dict release];
+	 
+	 NSMutableArray *keyArray = [[NSMutableArray alloc] init];
+	 [keyArray addObjectsFromArray:[self.academics2 allKeys]];
+	 
+	 self.keys = keyArray;
+	 //keys is the array that holds all the keys
+	 [keyArray release];
+	
+	 
+	 
+	 // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+//=============================================================================
+/*
+- (void)viewWillAppear:(BOOL)animated 
+ {
+    [super viewWillAppear:animated];
+}
+*/
+//=============================================================================
+/*
+- (void)viewDidAppear:(BOOL)animated 
+ {
+    [super viewDidAppear:animated];
+}
+*/
+//=============================================================================
+/*
+- (void)viewWillDisappear:(BOOL)animated 
+ {
+	[super viewWillDisappear:animated];
+}
+*/
+//=============================================================================
+/*
+- (void)viewDidDisappear:(BOOL)animated 
+ {
+	[super viewDidDisappear:animated];
+}
+*/
+//=============================================================================
+/*
+// Override to allow orientations other than the default portrait orientation.
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    // Return YES for supported orientations
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+*/
+//=============================================================================
+- (void)didReceiveMemoryWarning 
+{
+	// Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+	
+	// Release any cached data, images, etc that aren't in use.
+}
+//=============================================================================
+- (void)viewDidUnload 
+{
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+}
+//=============================================================================
+#pragma mark Table view methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
+{
+	//NSInteger numSections = [departments count];
+    //return numSections;
+//	return 1;
+	return [keys count];//------------
+}
+//=============================================================================
+// Customize the number of rows in the table view.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
+{
+	//---------------
+	if ([keys count] == 0)
+        return 0;
+    
+    NSString *key = [keys objectAtIndex:section];
+    NSArray *nameSection = [academics2 objectForKey:key];
+    return [nameSection count];
+	//---------------------
+	//return [departments count];
+	
+}
+//=============================================================================
+// Customize the appearance of table view cells.
+- (UITableViewCell *)tableView:(UITableView *)tableView 
+		 cellForRowAtIndexPath:(NSIndexPath *)indexPath 
+{
+	//-------------------
+    NSUInteger section = [indexPath section];
+    NSUInteger row = [indexPath row];
+    
+    NSString *key = [keys objectAtIndex:section];
+    NSArray *nameSection = [academics2 objectForKey:key];
+	//-------------------------------
+	
+	static NSString *AcadViewContCell = @"AcadViewContCell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: 
+                             AcadViewContCell];
+    if (cell == nil) 
+	   {
+		   cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+										  reuseIdentifier: AcadViewContCell] autorelease];
+	   }
+    // Configure the cell
+//    cell.textLabel.text = [self.departments objectAtIndex:indexPath.row];
+	  cell.textLabel.text = [nameSection objectAtIndex:indexPath.row];
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	
+	return cell;
+}
+//=============================================================================
+//------------------------------------------
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if ([keys count] == 0)
+        return nil;
+	
+    NSString *key = [keys objectAtIndex:section];
+    if (key == UITableViewIndexSearch)
+        return nil;
+    
+    return key;
+}
+
+//=============================================================================
+/*
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+       return keys;
+}
+
+//----------------------------------------------------
+*/
+//=============================================================================
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
+{
+    // Navigation logic may go here. Create and push another view controller.
+	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
+	// [self.navigationController pushViewController:anotherViewController];
+	// [anotherViewController release];
+	
+	
+	int row  = [indexPath row];
+	int sect = [indexPath section];
+	
+	if(row == 0)
+	   {
+		   ProgramsViewController *pvc =[[ProgramsViewController alloc]
+										 initWithNibName:@"ProgramsViewController" 
+										 bundle:nil];
+		   
+		   [self.navigationController pushViewController:pvc animated:YES];
+		   [pvc release];
+	   }
+	else
+	   {
+		   FacultiesViewController *fvc =[[FacultiesViewController alloc]
+										 initWithNibName:@"FacultiesViewController" 
+										 bundle:nil];
+		   
+		   [self.navigationController pushViewController:fvc animated:YES];
+		   [fvc release];
+	   }
+	
+}
+//=============================================================================
+/*
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
+}
+*/
+//=============================================================================
+/*
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+    }   
+    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+*/
+//=============================================================================
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+}
+*/
+//=============================================================================
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+//=============================================================================
+- (void)dealloc 
+{
+    [super dealloc];
+}
+//=============================================================================
+
+@end
+
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+#import "AboutViewController.h"
+#import "AboutMapViewController.h"
+
+@implementation AboutViewController
+@synthesize textView;
+
+//==============================================================================
+-(IBAction)mapButtonPressed:(id)sender
+{
+	NSLog(@"AboutMapButton Pressed");
+
+	AboutMapViewController *aboutmvc =[[AboutMapViewController alloc]
+										 initWithNibName:@"AboutMapViewController" 
+										 bundle:nil];
+	
+	[self.navigationController pushViewController:aboutmvc animated:YES];
+	[aboutmvc release];
+	
+	
+}
+//==============================================================================
+/*
+ // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+        // Custom initialization
+    }
+    return self;
+}
+*/
+//==============================================================================
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad 
+{
+    [super viewDidLoad];
+	self.title = @"AboutViewController";
+	UIBarButtonItem *AboutMapButton = [[UIBarButtonItem alloc] 
+									   initWithTitle:@"Map"
+									   style:UIBarButtonItemStyleDone
+									   target:self
+									   action:@selector(mapButtonPressed:)];
+	
+	self.navigationItem.rightBarButtonItem = AboutMapButton;
+
+//	AboutMapButton.tag = 99;
+	[AboutMapButton release];
+
+}
+//==============================================================================
+/*
+// Override to allow orientations other than the default portrait orientation.
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    // Return YES for supported orientations
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+*/
+//==============================================================================
+- (void)didReceiveMemoryWarning {
+	// Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+	
+	// Release any cached data, images, etc that aren't in use.
+}
+//==============================================================================
+- (void)viewDidUnload {
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+}
+//==============================================================================
+
+- (void)dealloc 
+{
+	[textView release];
+    [super dealloc];
+}
+//==============================================================================
+
+@end
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+#import <UIKit/UIKit.h>
+
+
+
+@interface VideosViewController : UITableViewController 
+{
+	NSMutableArray *videos;
+	//This array will contain the URLs strings to populate each UIWebview within
+	//a UITableCell
+	
+}
+
+@property (nonatomic, retain) NSMutableArray *videos;
+
+@end
+
+#import "VideosViewController.h"
+
+@implementation VideosViewController
+@synthesize videos;
+//==============================================================================
+/*
+ Information on how to embed YouTube Videos in your app 
+ go to these URLs: google search key words:<<"youtube videos app iPhone">>
+ http://apiblog.youtube.com/2009/02/youtube-apis-iphone-cool-mobile-apps.html
+ 
+ http://iphoneincubator.com/blog/audio-video/how-to-play-youtube-videos-within-an-application
+ 
+*/
+//==============================================================================
+/*
+- (id)initWithStyle:(UITableViewStyle)style 
+ {
+    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+    if (self = [super initWithStyle:style]) {
+    }
+    return self;
+}
+*/
+//==============================================================================
+- (void)viewDidLoad 
+ {
+	 [super viewDidLoad];
+	 self.title = @"VideosViewController";
+	 NSString *path = [[NSBundle mainBundle] pathForResource:@"videos" ofType:@"plist"];
+	 NSMutableArray *tmpArray =
+	 [[NSMutableArray alloc] initWithContentsOfFile:path ];
+	 self.videos = tmpArray;
+	 [tmpArray release];    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+//==============================================================================
+/*
+- (void)viewWillAppear:(BOOL)animated 
+ {
+    [super viewWillAppear:animated];
+}
+*/
+//==============================================================================
+/*
+- (void)viewDidAppear:(BOOL)animated 
+ {
+    [super viewDidAppear:animated];
+}
+*/
+//==============================================================================
+/*
+- (void)viewWillDisappear:(BOOL)animated 
+ {
+	[super viewWillDisappear:animated];
+}
+*/
+//==============================================================================
+/*
+- (void)viewDidDisappear:(BOOL)animated 
+ {
+	[super viewDidDisappear:animated];
+}
+*/
+//==============================================================================
+/*
+// Override to allow orientations other than the default portrait orientation.
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+ {
+    // Return YES for supported orientations
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+*/
+//==============================================================================
+- (void)didReceiveMemoryWarning 
+{
+	// Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+	
+	// Release any cached data, images, etc that aren't in use.
+}
+//==============================================================================
+- (void)viewDidUnload 
+{
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+}
+//==============================================================================
+#pragma mark Table view methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
+{
+    return 1;
+}
+//==============================================================================
+// Customize the number of rows in the table view.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
+{
+    return [self.videos count];
+}
+//==============================================================================
+// Customize the appearance of table view cells.
+- (UITableViewCell *)tableView:(UITableView *)tableView 
+		 cellForRowAtIndexPath:(NSIndexPath *)indexPath 
+{
+
+	static NSString *videoViewContCell = @"VideoViewContCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: videoViewContCell];
+    if (cell == nil) 
+	   {
+		   
+		   cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+										  reuseIdentifier: videoViewContCell] autorelease];
+			
+		}
+    // Configure the cell
+	cell.textLabel.text = [self.videos objectAtIndex:indexPath.row];
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	
+	 return cell;
+	
+}
+//==============================================================================
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
+{
+    // Navigation logic may go here. Create and push another view controller.
+	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
+	// [self.navigationController pushViewController:anotherViewController];
+	// [anotherViewController release];
+}
+//==============================================================================
+/*
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath 
+ {
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
+}
+*/
+//==============================================================================
+/*
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath 
+ {
+    
+    if (editingStyle == UITableViewCellEditingStyleDelete) 
+	{
+        // Delete the row from the data source
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+    }   
+    else if (editingStyle == UITableViewCellEditingStyleInsert) 
+	{
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+*/
+//==============================================================================
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath 
+ {
+}
+*/
+//==============================================================================
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath 
+ {
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+//==============================================================================
+- (void)dealloc 
+{
+    [super dealloc];
+}
+//==============================================================================
+
+@end
+
+
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+
+
+#import "DirectoryViewController.h"
+#import "NSDictionary-MutableDeepCopy.h"
+@implementation DirectoryViewController
+@synthesize names;
+@synthesize keys;
+@synthesize table;
+@synthesize search;
+@synthesize allNames;
+
+//============================================================================
+//============================================================================
+#pragma mark -
+#pragma mark Custom Methods
+- (void)resetSearch 
+{
+    NSMutableDictionary *allNamesCopy = [self.allNames mutableDeepCopy];
+    self.names = allNamesCopy;
+	[allNamesCopy release];
+    NSMutableArray *keyArray = [[NSMutableArray alloc] init];
+    [keyArray addObject:UITableViewIndexSearch];//adds the search icon to array
+    [keyArray addObjectsFromArray:[[self.allNames allKeys] sortedArrayUsingSelector:@selector(compare:)]];
+    self.keys = keyArray;
+    [keyArray release];
+}
+//============================================================================
+- (void)handleSearchForTerm:(NSString *)searchTerm
+{
+    NSMutableArray *sectionsToRemove = [[NSMutableArray alloc] init];
+    [self resetSearch];
+    
+    for (NSString *key in self.keys) //loop 1 over all keys
+	   {
+		   NSMutableArray *array = [names valueForKey:key];
+		   NSMutableArray *toRemove = [[NSMutableArray alloc] init];
+		   for (NSString *name in array) //loop 2 over all names in array
+			  {
+				  if ([name rangeOfString:searchTerm options:NSCaseInsensitiveSearch].location == NSNotFound)
+					  [toRemove addObject:name];
+			  }
+		   
+		   if ([array count] == [toRemove count])
+			   [sectionsToRemove addObject:key];
+		   
+		   [array removeObjectsInArray:toRemove];
+		   [toRemove release];
+	   }
+    
+	[self.keys removeObjectsInArray:sectionsToRemove];
+    [sectionsToRemove release];
+    [table reloadData];
+}
+//============================================================================
+- (void)viewDidLoad 
+{
+	self.title = @"DirectoryViewController";
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"sortednames"
+                                                     ofType:@"plist"];
+    NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:path];
+    self.allNames = dict;
+    [dict release];
+    isSearching = NO;
+	[search setShowsCancelButton:NO];//---------
+	
+    [self resetSearch];
+    [table reloadData];
+	[table setContentOffset:CGPointMake(0.0, 44.0) animated:NO];
+}
+//============================================================================
+- (void)viewDidUnload 
+{
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+    self.names = nil;
+    self.keys = nil;
+    self.table = nil;
+    self.search = nil;
+    self.allNames = nil;
+}
+//============================================================================
+- (void)dealloc 
+{
+    [names release];
+    [keys release];
+    [table release];
+    [search release];
+    [allNames release];
+    [super dealloc];
+}
+//============================================================================
+//============================================================================
+#pragma mark -
+#pragma mark Table View Data Source Methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return [keys count];
+    
+}
+//============================================================================
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if ([keys count] == 0)
+        return 0;
+    
+    NSString *key = [keys objectAtIndex:section];
+    NSArray *nameSection = [names objectForKey:key];
+    return [nameSection count];
+}
+//============================================================================
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSUInteger section = [indexPath section];
+    NSUInteger row = [indexPath row];
+    
+    NSString *key = [keys objectAtIndex:section];
+    NSArray *nameSection = [names objectForKey:key];
+    
+    static NSString *SectionsTableIdentifier = @"SectionsTableIdentifier";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:
+                             SectionsTableIdentifier ];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+                                       reuseIdentifier: SectionsTableIdentifier ] autorelease];
+    }
+    
+    cell.textLabel.text = [nameSection objectAtIndex:row];
+    return cell;
+}
+//============================================================================
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if ([keys count] == 0)
+        return nil;
+	
+    NSString *key = [keys objectAtIndex:section];
+    if (key == UITableViewIndexSearch)
+        return nil;
+    
+    return key;
+}
+//============================================================================
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+	if ([self.searchDisplayController isActive]) 
+		return nil;
+	
+	//if(isSearching)
+	   {
+		  // return nil;
+		}
+	return keys;
+}
+//============================================================================
+/*- (void)reloadSectionIndexTitles
+{
+}
+
+
+*/
+//============================================================================
+#pragma mark -
+#pragma mark Table View Delegate Methods
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [search resignFirstResponder];
+    search.text = @"";
+    isSearching = NO;
+    [tableView reloadData];
+    return indexPath;
+}
+//============================================================================
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+{
+    NSString *key = [keys objectAtIndex:index];
+    if (key == UITableViewIndexSearch)
+	   {
+		   [tableView setContentOffset:CGPointZero animated:NO];
+		   return NSNotFound;
+	   }
+    else return index;
+    
+}
+//============================================================================
+//============================================================================
+#pragma mark -
+#pragma mark Search Bar Delegate Methods
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    NSString *searchTerm = [searchBar text];
+    [self handleSearchForTerm:searchTerm];
+}
+//============================================================================
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
+{
+	isSearching = YES;
+	//set index off here+++++++++++++++++++++++
+	
+	[self.table reloadSectionIndexTitles];
+	[search setShowsCancelButton:YES];
+}
+//============================================================================
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchTerm
+{
+    if ([searchTerm length] == 0)
+	   {
+		   [self resetSearch];
+		   
+		   return;
+	   }
+    [self handleSearchForTerm:searchTerm];
+    
+}
+//============================================================================
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+    isSearching = NO;
+	
+    [self.table reloadSectionIndexTitles];
+	search.text = @"";
+	[search setShowsCancelButton:NO];//-------
+	//[self resetSearch];
+    
+	//show index here++++++++++++++++++++++++
+    
+	[searchBar resignFirstResponder];
+}
+@end
+
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+#import "DirectoryViewController.h"
+
+
+@implementation DirectoryViewController
+@synthesize names;
+@synthesize keys;
+@synthesize table;
+@synthesize search;
+@synthesize allNames;
+
+//============================================================================
+//============================================================================
+#pragma mark -
+#pragma mark Custom Methods
+- (void)resetSearch 
+{
+    NSMutableDictionary *allNamesCopy = [self.allNames mutableDeepCopy];
+    self.names = allNamesCopy;
+	[allNamesCopy release];
+    NSMutableArray *keyArray = [[NSMutableArray alloc] init];
+    [keyArray addObject:UITableViewIndexSearch];//adds the search icon to array
+    [keyArray addObjectsFromArray:[[self.allNames allKeys] sortedArrayUsingSelector:@selector(compare:)]];
+    self.keys = keyArray;
+    [keyArray release];
+}
+//============================================================================
+- (void)handleSearchForTerm:(NSString *)searchTerm
+{
+    NSMutableArray *sectionsToRemove = [[NSMutableArray alloc] init];
+    [self resetSearch];
+    
+    for (NSString *key in self.keys) //loop 1 over all keys
+	   {
+		   NSMutableArray *array = [names valueForKey:key];
+		   NSMutableArray *toRemove = [[NSMutableArray alloc] init];
+		   for (NSString *name in array) //loop 2 over all names in array
+			  {
+				  if ([name rangeOfString:searchTerm options:NSCaseInsensitiveSearch].location == NSNotFound)
+					  [toRemove addObject:name];
+			  }
+		   
+		   if ([array count] == [toRemove count])
+			   [sectionsToRemove addObject:key];
+		   
+		   [array removeObjectsInArray:toRemove];
+		   [toRemove release];
+	   }
+    
+	[self.keys removeObjectsInArray:sectionsToRemove];
+    [sectionsToRemove release];
+    [table reloadData];
+}
+//============================================================================
+- (void)viewDidLoad 
+{
+	self.title = @"DirectoryViewController";
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"sortednames"
+                                                     ofType:@"plist"];
+    NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:path];
+    self.allNames = dict;
+    [dict release];
+    isSearching = NO;
+	[search setShowsCancelButton:NO];//---------
+	
+	
+	
+    [self resetSearch];
+    [table reloadData];
+	[table setContentOffset:CGPointMake(0.0, 44.0) animated:NO];
+}
+//============================================================================
+- (void)viewDidUnload 
+{
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+    self.names = nil;
+    self.keys = nil;
+    self.table = nil;
+    self.search = nil;
+    self.allNames = nil;
+}
+//============================================================================
+- (void)dealloc 
+{
+    [names release];
+    [keys release];
+    [table release];
+    [search release];
+    [allNames release];
+    [super dealloc];
+}
+//============================================================================
+//============================================================================
+#pragma mark -
+#pragma mark Table View Data Source Methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return [keys count];
+    
+}
+//============================================================================
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if ([keys count] == 0)
+        return 0;
+    
+    NSString *key = [keys objectAtIndex:section];
+    NSArray *nameSection = [names objectForKey:key];
+    return [nameSection count];
+}
+//============================================================================
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSUInteger section = [indexPath section];
+    NSUInteger row = [indexPath row];
+    
+    NSString *key = [keys objectAtIndex:section];
+    NSArray *nameSection = [names objectForKey:key];
+    
+    static NSString *SectionsTableIdentifier = @"SectionsTableIdentifier";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:
+                             SectionsTableIdentifier ];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+                                       reuseIdentifier: SectionsTableIdentifier ] autorelease];
+    }
+    
+    cell.textLabel.text = [nameSection objectAtIndex:row];
+    return cell;
+}
+//============================================================================
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if ([keys count] == 0)
+        return nil;
+	
+    NSString *key = [keys objectAtIndex:section];
+    if (key == UITableViewIndexSearch)
+        return nil;
+    
+    return key;
+}
+//============================================================================
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+	//if ([self.searchDisplayController isActive]) 
+	//	return nil;
+	NSArray *tmpArray;
+	tmpArray = [[NSArray alloc] init];
+	if(isSearching == YES)
+	   {
+		  return tmpArray;
+		}
+	return keys;
+}
+//============================================================================
+/*- (void)reloadSectionIndexTitles
+{
+}
+
+
+*/
+//============================================================================
+#pragma mark -
+#pragma mark Table View Delegate Methods
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [search resignFirstResponder];
+    search.text = @"";
+    isSearching = NO;
+    [tableView reloadData];
+    return indexPath;
+}
+//============================================================================
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+{
+    NSString *key = [keys objectAtIndex:index];
+    if (key == UITableViewIndexSearch)
+	   {
+		   [tableView setContentOffset:CGPointZero animated:NO];
+		   return NSNotFound;
+	   }
+    else return index;
+    
+}
+//============================================================================
+//============================================================================
+#pragma mark -
+#pragma mark Search Bar Delegate Methods
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    NSString *searchTerm = [searchBar text];
+    [self handleSearchForTerm:searchTerm];
+}
+//============================================================================
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
+{
+	isSearching = YES;
+	//set index off here+++++++++++++++++++++++
+	
+	[self.table reloadSectionIndexTitles];
+	[search setShowsCancelButton:YES];
+}
+//============================================================================
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchTerm
+{
+    if ([searchTerm length] == 0)
+	   {
+		   [self resetSearch];
+		   
+		   return;
+	   }
+    [self handleSearchForTerm:searchTerm];
+    
+}
+//============================================================================
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+    isSearching = NO;
+	
+    [self.table reloadSectionIndexTitles];
+	search.text = @"";
+	[search setShowsCancelButton:NO];//-------
+	//[self resetSearch];
+    
+	//show index here++++++++++++++++++++++++
+    
+	[searchBar resignFirstResponder];
+}
+@end
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
+#import<Foundation/Foundation.h>
+//Category for NSDictionary class
+
+@interface NSDictionary(MutableDeepCopy)
+
+-(NSMutableDictionary *)MutableDeepCopy;
+
+@end
+
+//-----------------------------------------------------------------------------//
+#import "NSDictionary-MutableDeepCopy.h"
+@implementation NSDictionary(DeepMutableCopy)
+
+
+-(NSMutableDictionary *)mutableDeepCopy
+{
+    NSMutableDictionary *ret = [[NSMutableDictionary alloc] initWithCapacity:[self count]];
+    NSArray *keys = [self allKeys];
+    for (id key in keys)
+	   {
+		   id oneValue = [self valueForKey:key];
+		   id oneCopy = nil;
+		   
+		   if ([oneValue respondsToSelector:@selector(mutableDeepCopy)])
+			   oneCopy = [oneValue mutableDeepCopy];
+		   else if ([oneValue respondsToSelector:@selector(mutableCopy)])
+			   oneCopy = [oneValue mutableCopy];
+		   if (oneCopy == nil)
+			   oneCopy = [oneValue copy];
+		   [ret setValue:oneCopy forKey:key];
+	   }
+    return ret;
+}
+@end
+
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Research Units</key>
+	<array>
+		<string>CAE</string>
+		<string>IAM</string>
+		<string>IAR</string>
+		<string>SCARP</string>
+		<string>IES</string>
+		<string>FC</string>
+		<string>HELP</string>
+		<string>LIGI</string>
+		<string>MAGIC</string>
+		<string>IRES</string>
+		<string>SOEH</string>
+		<string>CWGS</string>
+	</array>
+	<key>Programs</key>
+	<array>
+		<string>Asia Pacific Policy Studies</string>
+		<string>Bioinformatics</string>
+		<string>Cell and Dev. Biology</string>
+		<string>European Studies</string>
+		<string>Genetics</string>
+		<string>Genome Science and Technology</string>
+		<string>Neuroscience</string>
+		<string>Occupational and Environmental Hygene</string>
+		<string>Interdisciplinary Oncology</string>
+		<string>Planning</string>
+		<string>Reseource Management and Env. Studies</string>
+		<string>Womens and Gender Studies</string>
+	</array>
+</dict>
+</plist>
